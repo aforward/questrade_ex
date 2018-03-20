@@ -33,4 +33,36 @@ defmodule QuestradeEx.Client do
   If the above values do not change between calls, then consider configuring
   them with `Mix.Config` to avoid using them throughout your code.
   """
+
+  alias QuestradeEx.{Api, Worker}
+
+  @doc """
+  Fetch a token based on the provided refresh_token for the user
+  """
+  def fetch_token(user, refresh_token) do
+    Api.request(
+      :post,
+      resource: "/token",
+      body: %{grant_type: :refresh_token, refresh_token: refresh_token},
+      headers: [{"Content-Type", "application/x-www-form-urlencoded"}]
+    )
+    |> assign_token(user)
+  end
+
+  @doc """
+  Fetch the stored token for the user, if none return an error
+  """
+  def fetch_token(user) do
+    case Worker.fetch_token(user) do
+      nil -> {:error, :missing_token}
+      token -> {:ok, token}
+    end
+  end
+
+  @doc """
+  Maybe you have a legit token, here's how how you can set it directly
+  """
+  def assign_token({200, token}, user), do: {:ok, Worker.assign_token(user, token)}
+  def assign_token({_, reason}, _), do: {:error, reason}
+  def assign_token(token, user), do: Worker.assign_token(user, token)
 end
