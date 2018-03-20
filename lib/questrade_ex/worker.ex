@@ -12,5 +12,4 @@ defmodule QuestradeEx.Worker do
   def init(state) do
     {:ok, state}
   end
-
 end

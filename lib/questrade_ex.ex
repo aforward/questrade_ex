@@ -1,6 +1,5 @@
 defmodule QuestradeEx do
-
-  @moduledoc"""
+  @moduledoc """
   A client API to the QuestradeEx API.
 
   To access direct calls to the service, you will want to use the
@@ -57,7 +56,7 @@ defmodule QuestradeEx do
 
   """
 
-  @doc"""
+  @doc """
   Issues an HTTP request with the given method to the given url_opts.
 
   Args:
@@ -76,5 +75,4 @@ defmodule QuestradeEx do
 
   """
   defdelegate request(method, opts \\ []), to: QuestradeEx.Api
-
 end

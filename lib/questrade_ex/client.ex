@@ -1,6 +1,5 @@
 defmodule QuestradeEx.Client do
-
-  @moduledoc"""
+  @moduledoc """
   Helper functions to access the QuestradeEx API in a
   more succinct way.  If any features of the API are
   not directly available here, then consider using
@@ -34,5 +33,4 @@ defmodule QuestradeEx.Client do
   If the above values do not change between calls, then consider configuring
   them with `Mix.Config` to avoid using them throughout your code.
   """
-
 end

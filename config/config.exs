@@ -36,8 +36,6 @@ use Mix.Config
 # To run `@tag :external` tests, you will need to provide a local
 # ./config/test.exs file, take a look at ./config/test.example.exs
 # for more details about what that needs to look like.
-if File.exists?("./config/#{Mix.env}.exs") do
-  import_config "#{Mix.env}.exs"
+if File.exists?("./config/#{Mix.env()}.exs") do
+  import_config "#{Mix.env()}.exs"
 end
-
-

@@ -1,6 +1,5 @@
 defmodule QuestradeEx.Api do
-
-  @moduledoc"""
+  @moduledoc """
   Take several options, and an HTTP method and send the request to QuestradeEx
 
   The available options are comprised of those to helper generate the QuestradeEx
@@ -20,7 +19,7 @@ defmodule QuestradeEx.Api do
 
   alias QuestradeEx.{Content, Request, Response}
 
-  @doc"""
+  @doc """
   Issues an HTTP request with the given method to the given url_opts.
 
   Args:
@@ -40,11 +39,10 @@ defmodule QuestradeEx.Api do
   """
   def request(method, opts \\ []) do
     opts
-    |> Request.create
+    |> Request.create()
     |> Request.send(method)
-    |> Response.normalize
-    |> Content.type
-    |> Content.decode
+    |> Response.normalize()
+    |> Content.type()
+    |> Content.decode()
   end
-
 end

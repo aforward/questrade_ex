@@ -66,7 +66,7 @@ defmodule QuestradeEx.Url do
         end).()
     |> List.flatten()
     |> Enum.reject(&is_nil/1)
-    |> Enum.map(fn s -> s |> String.trim("/")  end)
+    |> Enum.map(fn s -> s |> String.trim("/") end)
     |> Enum.join("/")
   end
 end

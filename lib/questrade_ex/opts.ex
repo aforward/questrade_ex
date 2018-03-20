@@ -1,6 +1,5 @@
 defmodule QuestradeEx.Opts do
-
-  @moduledoc"""
+  @moduledoc """
   Generate API options based on overwritten values, as well as
   any configured defaults.
 
@@ -8,7 +7,7 @@ defmodule QuestradeEx.Opts do
   the know what can be configured.
   """
 
-  @doc"""
+  @doc """
   Merge the `provided_opts` with the configured options from the
   `:questrade_ex` application env, available from `QuestradeEx.Opts.env/0`
 
@@ -18,8 +17,7 @@ defmodule QuestradeEx.Opts do
   """
   def merge(provided_opts), do: merge(provided_opts, env(), nil)
 
-
-  @doc"""
+  @doc """
   Merge the `provided_opts` with an env `configured_key`.  Or, merge those
   `provided_opts` with the default application envs in `QuestradeEx.Opts.env/0`,
   but only provide values for the `expected_keys`.
@@ -34,14 +32,16 @@ defmodule QuestradeEx.Opts do
       # Application env for `:questrade_ex`
       QuestradeEx.Opts.merge([resource: "messages"], :http_opts)
   """
-  def merge(provided_opts, configured_key_or_expected_keys) when is_atom(configured_key_or_expected_keys) do
+  def merge(provided_opts, configured_key_or_expected_keys)
+      when is_atom(configured_key_or_expected_keys) do
     merge(provided_opts, env(configured_key_or_expected_keys), nil)
   end
+
   def merge(provided_opts, expected_keys) when is_list(expected_keys) do
     merge(provided_opts, env(), expected_keys)
   end
 
-  @doc"""
+  @doc """
   Merge the `provided_opts` with the `configured_opts`.  Only provide
   values for the `expected_keys` (if `nil` then merge all keys from
   `configured_opts`).
@@ -62,6 +62,7 @@ defmodule QuestradeEx.Opts do
 
   """
   def merge(provided_opts, nil, _), do: provided_opts
+
   def merge(provided_opts, configured_opts, expected_keys) do
     case expected_keys do
       nil -> configured_opts
@@ -70,7 +71,7 @@ defmodule QuestradeEx.Opts do
     |> Keyword.merge(provided_opts)
   end
 
-  @doc"""
+  @doc """
   Lookup all application env values for `:questrade_ex`
 
   ## Example
@@ -81,7 +82,7 @@ defmodule QuestradeEx.Opts do
   """
   def env, do: Application.get_all_env(:questrade_ex)
 
-  @doc"""
+  @doc """
   Lookup the `key` within the `:questrade_ex` application.
 
   ## Example
@@ -90,5 +91,4 @@ defmodule QuestradeEx.Opts do
       QuestradeEx.Opts.env(:base)
   """
   def env(key), do: Application.get_env(:questrade_ex, key)
-
 end

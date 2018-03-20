@@ -79,7 +79,7 @@ defmodule QuestradeEx.Request do
 
   defp http_body(opts) do
     opts[:body]
-    |> Content.encode(opts |> http_headers |> Content.type)
+    |> Content.encode(opts |> http_headers |> Content.type())
   end
 
   defp http_headers(opts) do
@@ -98,7 +98,16 @@ defmodule QuestradeEx.Request do
 
   defp http_opts(opts) do
     opts
-    |> Keyword.drop([:base, :resource, :body, :basic_auth, :basic_user, :basic_password, :bearer_auth, :headers])
+    |> Keyword.drop([
+      :base,
+      :resource,
+      :body,
+      :basic_auth,
+      :basic_user,
+      :basic_password,
+      :bearer_auth,
+      :headers
+    ])
     |> Opts.merge(:http_opts)
   end
 end
