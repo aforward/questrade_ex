@@ -57,6 +57,15 @@ defmodule QuestradeEx do
   """
 
   @doc """
+  Seed questrade with a manual refresh token.
+
+  ## Examples
+
+      QuestradeEx.seed_token("me", "abc123")
+  """
+  defdelegate seed_token(user, refresh_token), to: QuestradeEx.Client, as: :fetch_token
+
+  @doc """
   Issues an HTTP request with the given method to the given url_opts.
 
   Args:
