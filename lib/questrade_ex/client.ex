@@ -79,6 +79,18 @@ defmodule QuestradeEx.Client do
   end
 
   @doc """
+  Refresh the token
+  """
+  def refresh_token(user) do
+    user
+    |> fetch_token
+    |> case do
+      {:ok, %{refresh_token: refresh_token}} -> fetch_token(user, refresh_token)
+      reply -> reply
+    end
+  end
+
+  @doc """
   Maybe you have a legit token, here's how how you can set it directly
   """
   def assign_token({200, token}, user), do: {:ok, Worker.assign_token(user, token)}

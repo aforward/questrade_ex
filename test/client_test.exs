@@ -22,13 +22,22 @@ defmodule QuestradeEx.ClientTest do
     assert {:error, :missing_token} = Client.fetch_token("y")
   end
 
+  test "refresh token missing" do
+    assert {:error, :missing_token} = Client.refresh_token("y")
+  end
+
+  test "refresh token invalid" do
+    Client.assign_token(%{refresh_token: "abc123"}, "p")
+    assert {:error, "Bad Request"} = Client.refresh_token("p")
+  end
+
   @tag :external
   test "bad refresh token" do
     assert Client.fetch_token("you", "badtoken") == {:error, "Bad Request"}
   end
 
   @tag :external
-  test "create a token based on configured refresh_token" do
+  test "make use of the token and do lots of testing (only 1 token, so 1 test)" do
     refresh_token = System.get_env("QUESTRADE_REFRESH_TOKEN")
     assert refresh_token != nil
 
@@ -45,5 +54,19 @@ defmodule QuestradeEx.ClientTest do
 
     {200, data} = Client.request_once("me", :get, resource: "v1/markets")
     assert data[:markets] != nil
+
+    {:ok, new_token} = Client.refresh_token("me")
+    assert same_token != new_token
+
+    {:ok, same_new_token} = Client.fetch_token("me")
+    assert same_new_token == new_token
+
+    {200, data} = Client.request_once("me", :get, resource: "v1/markets")
+    assert data[:markets] != nil
+
+    Client.assign_token(same_token, "me")
+
+    reply = Client.request_once("me", :get, resource: "v1/markets")
+    assert reply == {401, %{code: 1017, message: "Access token is invalid"}}
   end
 end
