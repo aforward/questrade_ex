@@ -34,7 +34,26 @@ defmodule QuestradeEx.Client do
   them with `Mix.Config` to avoid using them throughout your code.
   """
 
+  use FnExpr
   alias QuestradeEx.{Api, Worker}
+
+  @doc """
+  Make an API call to questrade for the provided user using the available token
+  """
+  def request_once(user, method, opts) do
+    user
+    |> fetch_token
+    |> case do
+      {:ok, %{api_server: base_url, access_token: token, token_type: "Bearer"}} ->
+        opts
+        |> Keyword.put(:base, base_url)
+        |> Keyword.put(:bearer_auth, token)
+        |> invoke(Api.request(method, &1))
+
+      resp ->
+        resp
+    end
+  end
 
   @doc """
   Fetch a token based on the provided refresh_token for the user

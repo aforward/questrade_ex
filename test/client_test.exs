@@ -42,5 +42,8 @@ defmodule QuestradeEx.ClientTest do
 
     {:ok, same_token} = Client.fetch_token("me")
     assert token == same_token
+
+    {200, data} = Client.request_once("me", :get, resource: "v1/markets")
+    assert data[:markets] != nil
   end
 end
