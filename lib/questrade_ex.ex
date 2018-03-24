@@ -60,6 +60,7 @@ defmodule QuestradeEx do
   Issues an HTTP request with the given method to the given url_opts.
 
   Args:
+    * `user` - Which user is making the request
     * `method` - HTTP method as an atom (`:get`, `:head`, `:post`, `:put`, `:delete`, etc.)
     * `opts` - A keyword list of options to help create the URL, provide the body and/or query params
 
@@ -71,8 +72,8 @@ defmodule QuestradeEx do
 
   ## Examples
 
-      QuestradeEx.request(:get, resource: "domains")
+      QuestradeEx.request("me", :get, resource: "domains")
 
   """
-  defdelegate request(method, opts \\ []), to: QuestradeEx.Api
+  defdelegate request(user, method, opts \\ []), to: QuestradeEx.Client
 end

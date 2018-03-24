@@ -58,15 +58,40 @@ defmodule QuestradeEx.ClientTest do
     {:ok, new_token} = Client.refresh_token("me")
     assert same_token != new_token
 
+    :timer.sleep(800)
+    {200, data} = Client.request_once("me", :get, resource: "v1/markets")
+    assert data[:markets] != nil
+
     {:ok, same_new_token} = Client.fetch_token("me")
     assert same_new_token == new_token
 
+    :timer.sleep(800)
     {200, data} = Client.request_once("me", :get, resource: "v1/markets")
     assert data[:markets] != nil
 
     Client.assign_token(same_token, "me")
 
+    :timer.sleep(800)
     reply = Client.request_once("me", :get, resource: "v1/markets")
     assert reply == {401, %{code: 1017, message: "Access token is invalid"}}
+
+    Client.assign_token(new_token, "me")
+
+    :timer.sleep(800)
+    {200, data} = Client.request_retry(reply, "me", :get, resource: "v1/markets")
+    assert data[:markets] != nil
+
+    assert "anything" == Client.request_retry("anything", "me", :get, resource: "v1/markets")
+
+    {:ok, new_new_token} = Client.fetch_token("me")
+    assert new_new_token != new_token
+    assert new_new_token != token
+
+    :timer.sleep(800)
+    {200, data} = Client.request("me", :get, resource: "v1/markets")
+    assert data[:markets] != nil
+
+    {:ok, same_new_new_token} = Client.fetch_token("me")
+    assert same_new_new_token == new_new_token
   end
 end

@@ -38,22 +38,34 @@ defmodule QuestradeEx.Client do
   alias QuestradeEx.{Api, Worker}
 
   @doc """
+  Make an API call, possibly requiring a refreshed token
+  """
+  def request(user, method, opts) do
+    user
+    |> request_once(method, opts)
+    |> request_retry(user, method, opts)
+  end
+
+  @doc """
   Make an API call to questrade for the provided user using the available token
   """
   def request_once(user, method, opts) do
     user
     |> fetch_token
-    |> case do
-      {:ok, %{api_server: base_url, access_token: token, token_type: "Bearer"}} ->
-        opts
-        |> Keyword.put(:base, base_url)
-        |> Keyword.put(:bearer_auth, token)
-        |> invoke(Api.request(method, &1))
-
-      resp ->
-        resp
-    end
+    |> do_request(method, opts)
   end
+
+  @doc """
+  Interpret the results of an API request, and possibly retry if we encounter
+  something that is retryable
+  """
+  def request_retry({401, %{code: 1017}}, user, method, opts) do
+    user
+    |> refresh_token
+    |> do_request(method, opts)
+  end
+
+  def request_retry(other_response, _user, _method, _opts), do: other_response
 
   @doc """
   Fetch a token based on the provided refresh_token for the user
@@ -96,4 +108,17 @@ defmodule QuestradeEx.Client do
   def assign_token({200, token}, user), do: {:ok, Worker.assign_token(user, token)}
   def assign_token({_, reason}, _), do: {:error, reason}
   def assign_token(token, user), do: Worker.assign_token(user, token)
+
+  defp do_request(
+         {:ok, %{api_server: base_url, access_token: token, token_type: "Bearer"}},
+         method,
+         opts
+       ) do
+    opts
+    |> Keyword.put(:base, base_url)
+    |> Keyword.put(:bearer_auth, token)
+    |> invoke(Api.request(method, &1))
+  end
+
+  defp do_request(other_response, _method, _opts), do: other_response
 end
