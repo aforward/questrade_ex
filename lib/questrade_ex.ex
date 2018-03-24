@@ -85,4 +85,12 @@ defmodule QuestradeEx do
 
   """
   defdelegate request(user, method, opts \\ []), to: QuestradeEx.Client
+
+
+
+  @doc """
+  Lookup a symbol.
+  """
+  defdelegate lookup_symbol(user, symbol), to: QuestradeEx.Resources.Search
+
 end
