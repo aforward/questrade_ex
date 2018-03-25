@@ -12,7 +12,7 @@ defmodule QuestradeEx.Client do
 
   Here is an outline of all the configurations you can set.
 
-    * `:base`      - The base URL which defaults to `http://localhost:4000/v1`
+    * `:base`      - The base URL which defaults to `https://login.questrade.com/oauth2`
     * `:http_opts` - A passthrough map of options to send to HTTP request, more details below
 
   This client library uses [HTTPoison](https://hex.pm/packages/httpoison)

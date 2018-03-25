@@ -1,5 +1,4 @@
 defmodule QuestradeEx.Resources.Search do
-
   use FnExpr
 
   @doc """
@@ -20,7 +19,7 @@ defmodule QuestradeEx.Resources.Search do
   def symbol_id(user, symbol) do
     symbol
     |> String.split(".")
-    |> List.first
+    |> List.first()
     |> invoke(fn prefix ->
       user
       |> QuestradeEx.request(:get, resource: "v1/symbols/search", params: [prefix: prefix])
@@ -35,21 +34,22 @@ defmodule QuestradeEx.Resources.Search do
     user
     |> symbol_id(symbol)
     |> case do
-       %{symbolId: id} ->
-          user
-          |> QuestradeEx.request(:get, resource: "v1/symbols/#{id}")
-          |> clean_symbol
-       resp -> resp
+      %{symbolId: id} ->
+        user
+        |> QuestradeEx.request(:get, resource: "v1/symbols/#{id}")
+        |> clean_symbol
+
+      resp ->
+        resp
     end
   end
 
-  defp find_symbol({200,  %{symbols: haystack}}, needle), do: find_symbol(haystack, needle)
+  defp find_symbol({200, %{symbols: haystack}}, needle), do: find_symbol(haystack, needle)
   defp find_symbol({:error, _}, _needle), do: nil
   defp find_symbol([], _needle), do: nil
   defp find_symbol([%{symbol: needle} = data | _], needle), do: data
   defp find_symbol([_ | tail], needle), do: find_symbol(tail, needle)
 
-  defp clean_symbol({200,  %{symbols: haystack}}), do: List.first(haystack)
+  defp clean_symbol({200, %{symbols: haystack}}), do: List.first(haystack)
   defp clean_symbol({:error, _}), do: nil
-
 end

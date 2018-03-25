@@ -3,7 +3,7 @@ use Mix.Config
 # Here is an example of how to configure this library
 #
 # config :questrade_ex,
-#  base: "http://localhost:4000/v1",
+#  base: "https://login.questrade.com/oauth2",
 #  http_opts: %{
 #    timeout: 5000,
 #  }

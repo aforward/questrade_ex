@@ -6,7 +6,7 @@ defmodule QuestradeEx.Api do
   URL, to extract data for the request and authenticate your API call.
 
   URL `opts` (to help create the resolved QuestradeEx URL):
-    * `:base` - The base URL which defaults to `http://localhost:4000/v1`
+    * `:base` - The base URL which defaults to `https://login.questrade.com/oauth2`
     * `:resource` - The requested resource (e.g. /domains)
 
   Data `opts` (to send data along with the request)

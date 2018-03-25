@@ -23,7 +23,7 @@ defmodule QuestradeEx.Request do
   ## Example
 
       iex> QuestradeEx.Request.create(resource: "logs").url
-      "http://localhost:4000/v1/logs"
+      "https://login.questrade.com/oauth2/logs"
 
       iex> QuestradeEx.Request.create(body: "What is life?").body
       "\\"What is life?\\""

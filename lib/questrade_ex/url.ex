@@ -4,7 +4,7 @@ defmodule QuestradeEx.Url do
   domain, and the desired resource.
   """
 
-  @base_url "http://localhost:4000/v1"
+  @base_url "https://login.questrade.com/oauth2"
 
   alias QuestradeEx.{Opts}
 
@@ -14,7 +14,7 @@ defmodule QuestradeEx.Url do
 
   ## Available options:
 
-    * `:base` - The base URL which defaults to `http://localhost:4000/v1`
+    * `:base` - The base URL which defaults to `https://login.questrade.com/oauth2`
     * `:resource` - The requested resource (e.g. /domains)
 
   The options above can be defaulted using `Mix.Config` configurations,
@@ -25,7 +25,7 @@ defmodule QuestradeEx.Url do
   ## Example
 
       iex> QuestradeEx.Url.generate()
-      "http://localhost:4000/v1"
+      "https://login.questrade.com/oauth2"
 
       iex> QuestradeEx.Url.generate(base: "http://localhost:4000/v2")
       "http://localhost:4000/v2"
@@ -43,16 +43,16 @@ defmodule QuestradeEx.Url do
       "http://localhost:4000/v2/stuff"
 
       iex> QuestradeEx.Url.generate()
-      "http://localhost:4000/v1"
+      "https://login.questrade.com/oauth2"
 
       iex> QuestradeEx.Url.generate(resource: "logs")
-      "http://localhost:4000/v1/logs"
+      "https://login.questrade.com/oauth2/logs"
 
       iex> QuestradeEx.Url.generate(resource: "tags/t1")
-      "http://localhost:4000/v1/tags/t1"
+      "https://login.questrade.com/oauth2/tags/t1"
 
       iex> QuestradeEx.Url.generate(resource: ["tags", "t1", "stats"])
-      "http://localhost:4000/v1/tags/t1/stats"
+      "https://login.questrade.com/oauth2/tags/t1/stats"
 
   """
   def generate(opts \\ []) do

@@ -9,7 +9,7 @@ defmodule QuestradeEx do
   Here is an example of how to configure this library
 
       config :questrade_ex,
-        base: "http://localhost:4000/v1",
+        base: "https://login.questrade.com/oauth2",
 
         # if you have Basic Authentication
         basic_auth: "api:abc123",
@@ -32,7 +32,7 @@ defmodule QuestradeEx do
 
   Here is an outline of all the configurations you can set.
 
-    * `:base`             - The base URL which defaults to `http://localhost:4000/v1`
+    * `:base`             - The base URL which defaults to `https://login.questrade.com/oauth2`
     * `:basic_auth`       - Your basic authentication user name / shared key as one value, which might look like `api:abc123`
     * `:basic_user`       - Your basic authentication split between user
     * `:basic_password`   - And the password for that basic authentication
@@ -99,5 +99,4 @@ defmodule QuestradeEx do
   Lookup a symbol.
   """
   defdelegate lookup_symbol(user, symbol), to: QuestradeEx.Resources.Search
-
 end
