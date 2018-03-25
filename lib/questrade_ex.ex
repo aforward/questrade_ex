@@ -66,6 +66,15 @@ defmodule QuestradeEx do
   defdelegate seed_token(user, refresh_token), to: QuestradeEx.Client, as: :fetch_token
 
   @doc """
+  Grab the token for the user
+
+  ## Examples
+
+      QuestradeEx.fetch_token("me")
+  """
+  defdelegate fetch_token(user), to: QuestradeEx.Client, as: :fetch_token
+
+  @doc """
   Issues an HTTP request with the given method to the given url_opts.
 
   Args:
@@ -85,8 +94,6 @@ defmodule QuestradeEx do
 
   """
   defdelegate request(user, method, opts \\ []), to: QuestradeEx.Client
-
-
 
   @doc """
   Lookup a symbol.
