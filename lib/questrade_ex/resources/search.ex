@@ -6,16 +6,57 @@ defmodule QuestradeEx.Resources.Search do
 
   ## Examples
 
-      QuestradeEx.Resources.Search.symbol_id("GS.TO")
-      %{"currency" => "CAD",
-        "description" => "GLUSKIN SHEFF SV",
-        "isQuotable" => true,
-        "isTradable" => true,
-        "listingExchange" => "TSX",
-        "securityType" => "Stock",
-        "symbol" => "GS.TO",
-        "symbolId" => 20374}
+      QuestradeEx.Resources.Search.symbol_id("me", {"TSX", "T"})
+      %{
+        currency: "CAD",
+        description: "TELUS CORPORATION",
+        isQuotable: true,
+        isTradable: true,
+        listingExchange: "TSX",
+        securityType: "Stock",
+        symbol: "T.TO",
+        symbolId: 38347
+      }
+
+      QuestradeEx.Resources.Search.symbol_id("me", "GS.TO")
+      %{
+        currency: "CAD",
+        description: "GLUSKIN SHEFF   ASSOCIATES INC.",
+        isQuotable: true,
+        isTradable: true,
+        listingExchange: "TSX",
+        securityType: "Stock",
+        symbol: "GS.TO",
+        symbolId: 20374
+      }
+
+      QuestradeEx.Resources.Search.symbol_id("me", {"NASDAQ", "T"})
+      %{
+        currency: "USD",
+        description: "AT&T Inc.",
+        isQuotable: true,
+        isTradable: true,
+        listingExchange: "NYSE",
+        securityType: "Stock",
+        symbol: "T",
+        symbolId: 6280
+      }
+
+      QuestradeEx.Resources.Search.symbol_id("me", "AAPL")
+      %{
+        currency: "USD",
+        description: "Apple Inc.",
+        isQuotable: true,
+        isTradable: true,
+        listingExchange: "NASDAQ",
+        securityType: "Stock",
+        symbol: "AAPL",
+        symbolId: 8049
+      }
   """
+  def symbol_id(user, {"TSX", ticker}), do: symbol_id(user, "#{ticker}.TO")
+  def symbol_id(user, {_, ticker}), do: symbol_id(user, ticker)
+
   def symbol_id(user, symbol) do
     symbol
     |> String.split(".")
