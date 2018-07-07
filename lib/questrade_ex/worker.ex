@@ -34,5 +34,4 @@ defmodule QuestradeEx.Worker do
   end
 
   defp resolve(pid), do: pid || __MODULE__
-
 end

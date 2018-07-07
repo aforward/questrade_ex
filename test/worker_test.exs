@@ -5,17 +5,20 @@ defmodule QuestradeEx.WorkerTest do
 
   test "fetch existig token" do
     pid = worker()
+    token = token(%{access_token: "abc123"})
+    W.assign_token("me", token, pid)
+    assert token == W.fetch_token("me", pid)
+  end
 
-    token = %{
+  def token(overrides \\ %{}) do
+    %{
       access_token: "abc123",
       api_server: "https://qt.com",
       expires_in: 1800,
       refresh_token: "def456",
       token_type: "Bearer"
     }
-
-    W.assign_token("me", token, pid)
-    assert token == W.fetch_token("me", pid)
+    |> Map.merge(overrides)
   end
 
   def worker() do
@@ -26,5 +29,4 @@ defmodule QuestradeEx.WorkerTest do
       {:ok, pid} -> pid
     end
   end
-
 end
