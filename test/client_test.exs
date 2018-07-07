@@ -1,5 +1,5 @@
 defmodule QuestradeEx.ClientTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   alias QuestradeEx.Client
   doctest QuestradeEx.Client
 

@@ -1,5 +1,5 @@
 defmodule QuestradeExTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   doctest QuestradeEx
   doctest QuestradeEx.Api

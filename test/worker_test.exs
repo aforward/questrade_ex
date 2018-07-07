@@ -1,5 +1,5 @@
 defmodule QuestradeEx.WorkerTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   alias QuestradeEx.Worker, as: W
   doctest QuestradeEx.Worker
 
