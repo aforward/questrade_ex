@@ -26,6 +26,7 @@ defmodule QuestradeEx.ClientTest do
     assert {:error, :missing_token} = Client.refresh_token("y")
   end
 
+  @tag :external
   test "refresh token invalid" do
     Client.assign_token(%{refresh_token: "abc123"}, "p")
     assert {:error, "Bad Request"} = Client.refresh_token("p")
