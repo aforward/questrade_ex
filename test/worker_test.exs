@@ -4,6 +4,8 @@ defmodule QuestradeEx.WorkerTest do
   doctest QuestradeEx.Worker
 
   test "fetch existig token" do
+    pid = worker()
+
     token = %{
       access_token: "abc123",
       api_server: "https://qt.com",
@@ -12,7 +14,17 @@ defmodule QuestradeEx.WorkerTest do
       token_type: "Bearer"
     }
 
-    W.assign_token("me", token)
-    assert token == W.fetch_token("me")
+    W.assign_token("me", token, pid)
+    assert token == W.fetch_token("me", pid)
   end
+
+  def worker() do
+    "t#{:rand.uniform(10)}"
+    |> String.to_atom()
+    |> W.start_link()
+    |> case do
+      {:ok, pid} -> pid
+    end
+  end
+
 end

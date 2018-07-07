@@ -2,20 +2,19 @@ defmodule QuestradeEx.Worker do
   use GenServer
   use FnExpr
   alias GenServer, as: GS
-  alias QuestradeEx.Worker, as: W
 
   ### Public API
 
-  def start_link() do
-    {:ok, _pid} = GS.start_link(__MODULE__, %{}, name: __MODULE__)
+  def start_link(name \\ nil) do
+    {:ok, _pid} = GS.start_link(__MODULE__, %{}, name: resolve(name))
   end
 
-  def assign_token(user, token) do
-    GS.call(W, {:assign_token, user, token})
+  def assign_token(user, token, pid \\ nil) do
+    GS.call(resolve(pid), {:assign_token, user, token})
   end
 
-  def fetch_token(user) do
-    GS.call(W, {:fetch_token, user})
+  def fetch_token(user, pid \\ nil) do
+    GS.call(resolve(pid), {:fetch_token, user})
   end
 
   ### Server Callbacks
@@ -33,4 +32,7 @@ defmodule QuestradeEx.Worker do
   def handle_call({:fetch_token, user}, _from, state) do
     {:reply, state[user], state}
   end
+
+  defp resolve(pid), do: pid || __MODULE__
+
 end
