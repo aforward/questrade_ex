@@ -2,7 +2,7 @@ defmodule QuestradeEx.Mixfile do
   use Mix.Project
 
   @name :questrade_ex
-  @version "0.1.1"
+  @version "0.1.2"
 
   @deps [
     {:mix_test_watch, "~> 0.3", only: :dev, runtime: false},

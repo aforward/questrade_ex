@@ -7,7 +7,7 @@
 
 ```elixir
 @deps [
-  questrade_ex: "~> 0.1.1"
+  questrade_ex: "~> 0.1.2"
 ]
 ```
 
