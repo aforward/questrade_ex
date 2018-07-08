@@ -14,6 +14,8 @@ defmodule QuestradeEx.WorkerTest do
     token = token(%{access_token: "abc123"})
     W.assign_token("me", token, pid)
     assert token == W.fetch_token("me", pid)
+
+    assert ["me"] == W.clients(pid)
   end
 
   test "persist tokens for restart" do

@@ -13,9 +13,9 @@ defmodule QuestradeEx.Worker do
     GS.call(resolve(pid), {:assign_token, user, token})
   end
 
-  def fetch_token(user, pid \\ nil) do
-    GS.call(resolve(pid), {:fetch_token, user})
-  end
+  def fetch_token(user, pid \\ nil), do: GS.call(resolve(pid), {:fetch_token, user})
+
+  def clients(pid \\ nil), do: GS.call(resolve(pid), :clients)
 
   ### Server Callbacks
 
@@ -35,6 +35,10 @@ defmodule QuestradeEx.Worker do
 
   def handle_call({:fetch_token, user}, _from, state) do
     {:reply, state[:users][user], state}
+  end
+
+  def handle_call(:clients, _from, state) do
+    {:reply, state[:users] |> Map.keys(), state}
   end
 
   defp restore_users(pid) do
