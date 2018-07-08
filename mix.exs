@@ -10,6 +10,7 @@ defmodule QuestradeEx.Mixfile do
     {:httpoison, "~> 1.0"},
     {:fn_expr, "~> 0.2"},
     {:version_tasks, "~> 0.10"},
+    {:persistent_ets, github: "michalmuskala/persistent_ets"},
     {:ex_doc, ">= 0.0.0", only: :dev}
   ]
 

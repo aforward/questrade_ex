@@ -21,3 +21,7 @@ erl_crash.dump
 
 # For local testing, otherwise should be set by the calling application
 config/dev.exs
+
+# Ignore the persistent ets table
+questrade_ex.tab
+questrade_ex*.tab
