@@ -54,18 +54,18 @@ defmodule QuestradeEx.Resources.Search do
         symbolId: 8049
       }
   """
-  def symbol_id(user, {"TSX", ticker}), do: symbol_id(user, "#{ticker}.TO")
-  def symbol_id(user, {_, ticker}), do: symbol_id(user, ticker)
+  def symbol_id(user, {_exchange, ticker} = qualified_ticker) do
+    user
+    |> QuestradeEx.request(:get, resource: "v1/symbols/search", params: [prefix: ticker])
+    |> case do
+      {200, %{symbols: haystack}} ->
+        haystack
+        |> Enum.filter(&symbol?(qualified_ticker, &1))
+        |> List.first()
 
-  def symbol_id(user, symbol) do
-    symbol
-    |> String.split(".")
-    |> List.first()
-    |> invoke(fn prefix ->
-      user
-      |> QuestradeEx.request(:get, resource: "v1/symbols/search", params: [prefix: prefix])
-      |> find_symbol(symbol)
-    end)
+      {:error, _} ->
+        nil
+    end
   end
 
   @doc """
@@ -85,12 +85,16 @@ defmodule QuestradeEx.Resources.Search do
     end
   end
 
-  defp find_symbol({200, %{symbols: haystack}}, needle), do: find_symbol(haystack, needle)
-  defp find_symbol({:error, _}, _needle), do: nil
-  defp find_symbol([], _needle), do: nil
-  defp find_symbol([%{symbol: needle} = data | _], needle), do: data
-  defp find_symbol([_ | tail], needle), do: find_symbol(tail, needle)
-
   defp clean_symbol({200, %{symbols: haystack}}), do: List.first(haystack)
   defp clean_symbol({:error, _}), do: nil
+
+  defp symbol?({"TSX", ticker}, data) do
+    data[:symbol] == "#{ticker}.TO" && data[:listingExchange] == "TSX"
+  end
+
+  defp symbol?({exchange, ticker}, data) do
+    data[:symbol] == ticker && data[:listingExchange] == exchange
+  end
+
+  defp symbol?(_, _), do: false
 end

@@ -1,5 +1,5 @@
 defmodule QuestradeEx.ClientTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
   alias QuestradeEx.Client
   doctest QuestradeEx.Client
 
@@ -43,6 +43,7 @@ defmodule QuestradeEx.ClientTest do
     assert refresh_token != nil
 
     assert {:ok, token} = Client.fetch_token("me", refresh_token)
+    IO.inspect(token)
 
     assert token[:access_token] != nil
     assert token[:api_server] != nil
@@ -57,28 +58,29 @@ defmodule QuestradeEx.ClientTest do
     assert data[:markets] != nil
 
     {:ok, new_token} = Client.refresh_token("me")
+    IO.inspect(new_token)
     assert same_token != new_token
 
-    :timer.sleep(800)
+    wait_for_worker()
     {200, data} = Client.request_once("me", :get, resource: "v1/markets")
     assert data[:markets] != nil
 
     {:ok, same_new_token} = Client.fetch_token("me")
     assert same_new_token == new_token
 
-    :timer.sleep(800)
+    wait_for_worker()
     {200, data} = Client.request_once("me", :get, resource: "v1/markets")
     assert data[:markets] != nil
 
     Client.assign_token(same_token, "me")
 
-    :timer.sleep(800)
+    wait_for_worker()
     reply = Client.request_once("me", :get, resource: "v1/markets")
     assert reply == {401, %{code: 1017, message: "Access token is invalid"}}
 
     Client.assign_token(new_token, "me")
 
-    :timer.sleep(800)
+    wait_for_worker()
     {200, data} = Client.request_retry(reply, "me", :get, resource: "v1/markets")
     assert data[:markets] != nil
 
@@ -88,11 +90,17 @@ defmodule QuestradeEx.ClientTest do
     assert new_new_token != new_token
     assert new_new_token != token
 
-    :timer.sleep(800)
+    wait_for_worker()
     {200, data} = Client.request("me", :get, resource: "v1/markets")
     assert data[:markets] != nil
 
     {:ok, same_new_new_token} = Client.fetch_token("me")
     assert same_new_new_token == new_new_token
+  end
+
+  defp wait_for_worker() do
+    [{_, pid, _, _}] = Supervisor.which_children(QuestradeEx.Supervisor)
+    :sys.get_state(pid)
+    :timer.sleep(1200)
   end
 end
