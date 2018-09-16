@@ -6,10 +6,10 @@ defmodule QuestradeEx.Mixfile do
 
   @deps [
     {:mix_test_watch, "~> 0.3", only: :dev, runtime: false},
-    {:jason, "~> 1.0"},
-    {:httpoison, "~> 1.0"},
-    {:fn_expr, "~> 0.2"},
-    {:version_tasks, "~> 0.10"},
+    {:jason, "~> 1.1"},
+    {:httpoison, "~> 1.3"},
+    {:fn_expr, "~> 0.3"},
+    {:version_tasks, "~> 0.11"},
     {:persistent_ets, github: "michalmuskala/persistent_ets"},
     {:ex_doc, ">= 0.0.0", only: :dev}
   ]
@@ -24,7 +24,7 @@ defmodule QuestradeEx.Mixfile do
     [
       app: @name,
       version: @version,
-      elixir: ">= 1.6.0",
+      elixir: ">= 1.7.0",
       deps: @deps,
       aliases: @aliases,
       build_embedded: in_production

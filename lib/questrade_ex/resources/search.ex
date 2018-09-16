@@ -53,6 +53,18 @@ defmodule QuestradeEx.Resources.Search do
         symbol: "AAPL",
         symbolId: 8049
       }
+
+      QuestradeEx.Resources.Search.symbol_id("me", {"TSX", "AX.UN"})
+      %{
+        currency: "CAD",
+        description: "ARTIS REAL ESTATE INVESTMENT TRUST UNITS",
+        isQuotable: true,
+        isTradable: true,
+        listingExchange: "TSX",
+        securityType: "Stock",
+        symbol: "AX.UN.TO",
+        symbolId: 8313
+      }
   """
   def symbol_id(user, {_exchange, ticker} = qualified_ticker) do
     user
@@ -60,6 +72,7 @@ defmodule QuestradeEx.Resources.Search do
     |> case do
       {200, %{symbols: haystack}} ->
         haystack
+        |> IO.inspect()
         |> Enum.filter(&symbol?(qualified_ticker, &1))
         |> List.first()
 
@@ -91,6 +104,8 @@ defmodule QuestradeEx.Resources.Search do
   defp symbol?({"TSX", ticker}, data) do
     data[:symbol] == "#{ticker}.TO" && data[:listingExchange] == "TSX"
   end
+
+  defp symbol?({:unknown, ticker}, data), do: data[:symbol] == ticker
 
   defp symbol?({exchange, ticker}, data) do
     data[:symbol] == ticker && data[:listingExchange] == exchange
