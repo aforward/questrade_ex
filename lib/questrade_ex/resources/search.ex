@@ -72,7 +72,6 @@ defmodule QuestradeEx.Resources.Search do
     |> case do
       {200, %{symbols: haystack}} ->
         haystack
-        |> IO.inspect()
         |> Enum.filter(&symbol?(qualified_ticker, &1))
         |> List.first()
 
