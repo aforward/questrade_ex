@@ -24,7 +24,7 @@ defmodule QuestradeEx.Mixfile do
     [
       app: @name,
       version: @version,
-      elixir: ">= 1.7.0",
+      elixir: "~> 1.8.0",
       deps: @deps,
       aliases: @aliases,
       build_embedded: in_production
