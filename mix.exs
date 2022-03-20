@@ -25,7 +25,6 @@ defmodule QuestradeEx.MixProject do
       {:httpoison, "~> 1.3"},
       {:fn_expr, "~> 0.3"},
       {:version_tasks, "~> 0.12"},
-      {:persistent_ets, github: "michalmuskala/persistent_ets"},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
