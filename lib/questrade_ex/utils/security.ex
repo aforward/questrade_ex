@@ -4,6 +4,8 @@ defmodule QuestradeEx.Security do
 
   def secret(), do: :crypto.strong_rand_bytes(16)
 
+  def encrypt(message, secret) when is_map(message), do: encrypt(Jason.encode!(message), secret)
+
   def encrypt(message, secret) do
     iv = iv()
 
@@ -36,10 +38,15 @@ defmodule QuestradeEx.Security do
   defp unpad(data) do
     end_index = byte_size(data) - :binary.last(data)
 
-    if end_index >= 0 do
-      {:ok, :binary.part(data, 0, end_index)}
-    else
+    if end_index < 0 do
       {:error, "Unable to decrypt '#{data |> inspect()}'"}
+    else
+      :binary.part(data, 0, end_index)
+      |> Jason.decode(keys: :atoms)
+      |> case do
+        {:error, %{data: asis}} -> {:ok, asis}
+        {:ok, decoded} -> {:ok, decoded}
+      end
     end
   end
 end

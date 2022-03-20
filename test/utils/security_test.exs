@@ -13,6 +13,10 @@ defmodule QuestradeEx.SecurityTest do
       encrypted2b = Security.encrypt("hello", "shhh2")
       assert encrypted2a != encrypted2b
     end
+
+    test "supports encrypting maps" do
+      Security.encrypt(%{a: "hello"}, "shhh1")
+    end
   end
 
   describe "decrypt/2" do
@@ -27,6 +31,11 @@ defmodule QuestradeEx.SecurityTest do
     test "handles nil" do
       {:error, message} = Security.decrypt(nil, "shhh1")
       assert message == nil
+    end
+
+    test "handles maps" do
+      encrypted1 = Security.encrypt(%{a: "hello"}, "shhh1")
+      assert Security.decrypt(encrypted1, "shhh1") == {:ok, %{a: "hello"}}
     end
 
     test "handles invalid challenges with nil" do

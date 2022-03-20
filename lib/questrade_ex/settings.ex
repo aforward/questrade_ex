@@ -37,6 +37,10 @@ defmodule QuestradeEx.Settings do
       |> Map.get(:tokens)
       |> Map.get(user)
       |> Security.decrypt(state[:secret])
+      |> case do
+        {:error, nil} -> {:error, :missing_token}
+        asis -> asis
+      end
 
     {:reply, decrypted, state}
   end
