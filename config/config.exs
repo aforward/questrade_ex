@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 # Here is an example of how to configure this library
 #
