@@ -27,7 +27,7 @@ defmodule QuestradeEx do
         }
 
   Our default `mix test` tests will use [Bypass](https://hex.pm/packages/bypass)
-  as the `base` service URL so that we will not hit your production MailGun
+  as the `base` service URL so that we will not hit your production Questrade
   account during testing.
 
   Here is an outline of all the configurations you can set.
