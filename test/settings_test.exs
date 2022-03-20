@@ -1,6 +1,6 @@
 defmodule QuestradeEx.SettingsTest do
   use ExUnit.Case, async: true
-  alias QuestradeEx.Settings
+  alias QuestradeEx.{Settings, Security}
   doctest QuestradeEx.Settings
 
   describe "secret/1" do
@@ -11,42 +11,41 @@ defmodule QuestradeEx.SettingsTest do
       assert Settings.secret(pid1) == "shhh1"
       assert Settings.secret(pid2) == "shhh2"
     end
-  end
 
-  describe "encrypt/2" do
-    test "based on the secret" do
-      pid1 = settings(secret: "shhh1")
-      pid2 = settings(secret: "shhh2")
-
-      encrypted1a = Settings.encrypt("hello", pid1)
-      encrypted1b = Settings.encrypt("hello", pid1)
-      assert encrypted1a != encrypted1b
-
-      encrypted2a = Settings.encrypt("hello", pid2)
-      encrypted2b = Settings.encrypt("hello", pid2)
-      assert encrypted2a != encrypted2b
+    test "generate one if none provided" do
+      pid = settings()
+      assert Settings.secret(pid) != nil
     end
   end
 
-  describe "decrypt/2" do
-    test "based on the secret" do
-      pid1 = settings(secret: "shhh1")
-      pid2 = settings(secret: "shhh2")
+  describe "set_token/3" do
+    test "encryptes the token" do
+      pid = settings(secret: "shhh1")
 
-      encrypted1 = Settings.encrypt("hello", pid1)
-      assert Settings.decrypt(encrypted1, pid1) == {:ok, "hello"}
+      encrypted = Settings.set_token("aforward@hey.com", "abc123", pid)
+      assert Security.decrypt(encrypted, "shhh1") == {:ok, "abc123"}
+    end
+  end
 
-      encrypted2 = Settings.encrypt("hello", pid2)
-      assert Settings.decrypt(encrypted2, pid2) == {:ok, "hello"}
+  describe "get_token/2" do
+    test "no token available" do
+      pid = settings(secret: "shhh1")
+      assert Settings.get_token("aforward@hey.com", pid) == {:error, nil}
     end
 
-    test "handles invalid challenges with nil" do
+    test "decrypted" do
+      pid = settings(secret: "shhh1")
+
+      Settings.set_token("aforward@hey.com", "def456", pid)
+      assert Settings.get_token("aforward@hey.com", pid) == {:ok, "def456"}
+    end
+
+    test "handles errors" do
       pid1 = settings(secret: "shhh1")
       pid2 = settings(secret: "shhh2")
 
-      encrypted1 = Settings.encrypt("hello", pid1)
-      {:error, message} = Settings.decrypt(encrypted1, pid2)
-      assert message =~ "Unable to decrypt"
+      Settings.set_token("aforward@hey.com", "abc123", pid1)
+      {:error, _msg} = Settings.get_token("aforward@hey.com", pid2)
     end
   end
 

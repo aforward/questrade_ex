@@ -1,68 +1,44 @@
 defmodule QuestradeEx.Settings do
   alias GenServer, as: GS
-
-  # Use AES 128 Bit Keys for Encryption.
-  @block_size 16
+  alias QuestradeEx.Security
 
   def start_link(opts \\ []) do
-    {:ok, _pid} = GS.start_link(__MODULE__, opts[:secret], name: resolve(opts))
+    {:ok, _pid} =
+      GS.start_link(__MODULE__, Keyword.get(opts, :secret, Security.secret()), name: resolve(opts))
   end
 
   def init(secret) do
-    {:ok, %{secret: secret}}
+    {:ok, %{secret: secret || :crypto.strong_rand_bytes(10), tokens: %{}}}
   end
 
   def secret(pid \\ nil), do: GS.call(resolve(pid), :secret)
 
-  def encrypt(message, pid \\ nil), do: GS.call(resolve(pid), {:encrypt, message})
+  def set_token(user, token, pid \\ nil), do: GS.call(resolve(pid), {:set_token, user, token})
 
-  def decrypt(message, pid \\ nil), do: GS.call(resolve(pid), {:decrypt, message})
+  def get_token(user, pid \\ nil), do: GS.call(resolve(pid), {:get_token, user})
 
   def handle_call(:secret, _from, state) do
     {:reply, state[:secret], state}
   end
 
-  def handle_call({:encrypt, message}, _from, state) do
-    iv = iv()
+  def handle_call({:set_token, user, token}, _from, state) do
+    encrypted = Security.encrypt(token, state[:secret])
 
-    encrypted =
-      (iv <> :crypto.crypto_one_time(:aes_128_cbc, crypto_key(state), iv, pad(message), true))
-      |> :base64.encode()
+    new_state =
+      state
+      |> Map.update!(:tokens, &Map.put(&1, user, encrypted))
 
-    {:reply, encrypted, state}
+    {:reply, encrypted, new_state}
   end
 
-  def handle_call({:decrypt, message}, _from, state) do
-    ciphertext = :base64.decode(message)
-    <<iv::binary-16, ciphertext::binary>> = ciphertext
-
+  def handle_call({:get_token, user}, _from, state) do
     decrypted =
-      :crypto.crypto_one_time(:aes_128_cbc, crypto_key(state), iv, ciphertext, false)
-      |> unpad()
+      state
+      |> Map.get(:tokens)
+      |> Map.get(user)
+      |> Security.decrypt(state[:secret])
 
     {:reply, decrypted, state}
-  end
-
-  defp crypto_key(%{secret: secret}) do
-    <<crypto_secret::binary-16, _::binary>> = :crypto.hash(:sha256, secret)
-    crypto_secret
-  end
-
-  defp iv(), do: :crypto.strong_rand_bytes(16)
-
-  defp pad(data) do
-    to_add = @block_size - rem(byte_size(data), @block_size)
-    data <> to_string(:string.chars(to_add, to_add))
-  end
-
-  defp unpad(data) do
-    end_index = byte_size(data) - :binary.last(data)
-
-    if end_index >= 0 do
-      {:ok, :binary.part(data, 0, end_index)}
-    else
-      {:error, "Unable to decrypt '#{data |> inspect()}'"}
-    end
   end
 
   defp resolve(opts) when is_list(opts), do: resolve(opts[:name])
